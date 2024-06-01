@@ -1,0 +1,126 @@
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id              Int            @id @default(autoincrement())
+  email           String         @unique
+  password        String
+  persons         Person[]
+  marcas          Marca[]
+  
+  cotizaciones    Cotizacion[]
+  vehiculos       Vehiculo[]
+  piezas          Pieza[]
+  citas_servicio  CitaServicio[]
+  garantias       Garantia[]
+  proveedores     Proveedor[]
+  rutas_entrega   RutaEntrega[]
+}
+
+model Person {
+  id        Int      @id @default(autoincrement())
+  name      String
+  lastName  String?
+  published Boolean  @default(false)
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model Marca {
+  id       Int      @id @default(autoincrement())
+  nombre   String
+  modelo   String
+  precio   Float
+  userId   Int
+  user     User     @relation(fields: [userId], references: [id])
+}
+
+model Venta {
+  id           Int      @id @default(autoincrement())
+  cliente      String
+  vehiculo     String
+ 
+  precio_venta Float
+  vendedor     String
+  
+}
+
+model Cotizacion {
+  id              Int      @id @default(autoincrement())
+  cliente         String
+  vehiculo        String
+
+  precio_cotizado Float
+  vendedor        String
+  user            User     @relation(fields: [userId], references: [id])
+  userId          Int
+}
+
+model Vehiculo {
+  id       Int      @id @default(autoincrement())
+  marca    String
+  modelo   String
+  anio     Int
+  color    String
+  precio   Float
+  estado   String
+  user     User     @relation(fields: [userId], references: [id])
+  userId   Int
+}
+
+model Pieza {
+  id                Int      @id @default(autoincrement())
+  nombre_pieza      String
+  vehiculo_compatible String
+  cantidad          Int
+  precio            Float
+  proveedor         String
+  user              User     @relation(fields: [userId], references: [id])
+  userId            Int
+}
+
+model CitaServicio {
+  id          Int      @id @default(autoincrement())
+  cliente     String
+
+  tipo_servicio String
+  comentarios String?
+  user        User     @relation(fields: [userId], references: [id])
+  userId      Int
+}
+
+model Garantia {
+  id           Int      @id @default(autoincrement())
+  vehiculo     String
+
+  cobertura    String
+  user         User     @relation(fields: [userId], references: [id])
+  userId       Int
+}
+
+model Proveedor {
+  id        Int      @id @default(autoincrement())
+  nombre    String
+  contacto  String
+  telefono  String
+  email     String
+  direccion String
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int
+}
+
+model RutaEntrega {
+  id               Int      @id @default(autoincrement())
+  descripcion_ruta String
+  vehiculo_asignado String
+  conductor        String
+  
+  user             User     @relation(fields: [userId], references: [id])
+  userId           Int
+}
